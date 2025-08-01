@@ -1,0 +1,30 @@
+#--SETTINGS--
+
+# Directory in which there are source files.
+SOURCE_DIRECTORY := src
+
+# Directory in which there are resources (like images, sounds, etc.).
+RESOURCES_DIRECTORY := res
+
+# Directory in which the program along with the resources will be outputted in.
+OUTPUT_DIRECTORY := bin
+
+# The executable's name (add .exe if on windows)
+EXECUTABLE_NAME := OdinTemp
+
+# Run the project immediately after export?
+RUN = true
+
+#--SCRIPT--
+
+build:
+	mkdir -p $(OUTPUT_DIRECTORY)
+	odin build $(SOURCE_DIRECTORY) -out=$(OUTPUT_DIRECTORY)/$(EXECUTABLE_NAME)
+	cp -r $(RESOURCES_DIRECTORY) $(OUTPUT_DIRECTORY)		
+
+ifeq ($(RUN), true)
+	./$(OUTPUT_DIRECTORY)/$(EXECUTABLE_NAME)
+endif
+
+clean:
+	rm -rf $(OUTPUT_DIRECTORY)

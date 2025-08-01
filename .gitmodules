@@ -1,0 +1,9 @@
+[submodule "CTemp/raylib"]
+	path = CTemp/raylib
+	url = https://github.com/raysan5/raylib.git
+[submodule "ZigOriginalTemp/raylib"]
+	path = ZigOriginalTemp/raylib
+	url = https://github.com/raysan5/raylib.git
+[submodule "ZigBindingsTemp/raylib-zig"]
+	path = ZigBindingsTemp/raylib-zig
+	url = https://github.com/Not-Nik/raylib-zig

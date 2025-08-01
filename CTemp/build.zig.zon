@@ -1,0 +1,17 @@
+.{
+    .name = .CTemp,
+    .version = "0.0.0",
+    .fingerprint = 0x5354206c593836da,
+    .minimum_zig_version = "0.14.1",
+    .dependencies = .{
+        .raylib = .{
+            .path = "raylib",
+        },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+        "README.md",
+    },
+}

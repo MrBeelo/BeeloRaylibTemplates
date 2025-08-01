@@ -1,0 +1,5 @@
+bin/
+zig-out/
+.zig-cache/
+raylib/
+raylib-zig/
