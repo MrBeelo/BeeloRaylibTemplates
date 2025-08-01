@@ -4,6 +4,8 @@ This is a collection of templates that I use for all of my games.
 
 All of them include a simple makefile that you can use to build your game.
 
+All templates non-Odin uses git submodules, so make sure to clone those as well.
+
 
 Some notes about each one:
 
