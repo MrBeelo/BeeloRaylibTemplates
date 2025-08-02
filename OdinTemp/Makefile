@@ -15,7 +15,24 @@ EXECUTABLE_NAME := OdinTemp
 # Run the project immediately after export?
 RUN = true
 
+# Type of optimization to use Options: none, minimal, size, speed, aggressive
+OPTIMIZE = speed
+
 #--SCRIPT--
+
+OPTIMIZATION_FLAG := 
+
+ifeq ($(OPTIMIZATION), none)
+	OPTIMIZATION_FLAG += -o:none
+else ifeq ($(OPTIMIZATION), minimal)
+	OPTIMIZATION_FLAG += -o:minimal
+else ifeq ($(OPTIMIZATION), size)
+	OPTIMIZATION_FLAG += -o:size
+else ifeq ($(OPTIMIZATION), speed)
+	OPTIMIZATION_FLAG += -o:speed
+else ifeq ($(OPTIMIZATION), aggressive)
+	OPTIMIZATION_FLAG += -o:aggressive
+endif
 
 build:
 	mkdir -p $(OUTPUT_DIRECTORY)

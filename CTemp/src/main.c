@@ -3,7 +3,10 @@
 
 int main(void)
 {
-    InitWindow(800, 450, "CTemp");
+    const float screenWidth = 800;
+    const float screenHeight = 450;
+    
+    InitWindow(screenWidth, screenHeight, "CTemp");
     SearchAndSetResourceDir("res");
 
     Texture2D blob = LoadTexture("blob.png");
