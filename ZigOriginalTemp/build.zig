@@ -18,9 +18,10 @@ pub fn build(b: *std.Build) !void {
     const raylib_dep = b.dependency("raylib", .{
         .target = target,
         .optimize = optimize,
+        .linux_display_backend = .X11
     });
     
-    const raylib_artifact = raylib_dep.artifact("raylib"); // raylib C library
+    const raylib_artifact = raylib_dep.artifact("raylib");
     exe.linkLibrary(raylib_artifact);
     
     const sdk_path_opt = b.option([]const u8, "macos-sdk-path", "Path to macOS SDK");

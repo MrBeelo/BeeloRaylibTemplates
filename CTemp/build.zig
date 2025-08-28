@@ -4,13 +4,6 @@ pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
     
-    const raylib_dep = b.dependency("raylib", .{
-        .target = target,
-        .optimize = optimize,
-    });
-    
-    const raylib_artifact = raylib_dep.artifact("raylib"); // raylib C library
-    
     const exe_mod = b.createModule(.{
         .target = target,
         .optimize = optimize
@@ -21,6 +14,13 @@ pub fn build(b: *std.Build) !void {
         .root_module = exe_mod
     });
     
+    const raylib_dep = b.dependency("raylib", .{
+        .target = target,
+        .optimize = optimize,
+        .linux_display_backend = .X11
+    });
+    
+    const raylib_artifact = raylib_dep.artifact("raylib");
     exe.linkLibrary(raylib_artifact);
     
     exe.linkLibC();
