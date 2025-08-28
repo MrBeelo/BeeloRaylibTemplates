@@ -24,6 +24,6 @@ pub fn main() anyerror!void {
 
         crl.DrawText("Congrats! You created your first window!", 190, 200, 20, crl.LIGHTGRAY);
         crl.DrawTexture(blob, 400 - @divFloor(blob.width, 2) , 150, crl.WHITE);
-        crl.DrawText(try std.fmt.allocPrintZ(allocator, "FPS: {d:.1}", .{crl.GetFPS()}), 10, 10, 32, crl.LIGHTGRAY);
+        crl.DrawText(try std.fmt.allocPrintSentinel(allocator, "FPS: {d:.1}", .{crl.GetFPS()}, 0), 10, 10, 32, crl.LIGHTGRAY);
     }
 }
