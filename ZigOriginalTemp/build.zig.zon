@@ -2,7 +2,7 @@
     .name = .ZigOriginalTemp,
     .version = "0.0.0",
     .fingerprint = 0x9f6509bbaf2d0620,
-    .minimum_zig_version = "0.14.1",
+    .minimum_zig_version = "0.15.1",
     .dependencies = .{
         .raylib = .{
             .path = "raylib",

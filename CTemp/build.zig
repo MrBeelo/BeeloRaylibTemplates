@@ -3,12 +3,6 @@ const std = @import("std");
 pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
-
-    const exe = b.addExecutable(.{
-        .name = "CTemp",
-        .target = target,
-        .optimize = optimize,
-    });
     
     const raylib_dep = b.dependency("raylib", .{
         .target = target,
@@ -16,14 +10,24 @@ pub fn build(b: *std.Build) !void {
     });
     
     const raylib_artifact = raylib_dep.artifact("raylib"); // raylib C library
+    
+    const exe_mod = b.createModule(.{
+        .target = target,
+        .optimize = optimize
+    });
+
+    const exe = b.addExecutable(.{
+        .name = "CTemp",
+        .root_module = exe_mod
+    });
+    
     exe.linkLibrary(raylib_artifact);
     
     exe.linkLibC();
-    
     const include_cpp_opt = b.option(bool, "include-cpp", "Includes the C++ standard library");
     if(include_cpp_opt orelse false) exe.linkLibCpp();
     
-    var sources = std.ArrayList([]const u8).init(b.allocator);
+    var sources = std.array_list.Managed([]const u8).init(b.allocator);
     const path = "src";
     {
         var dir = try std.fs.cwd().openDir(path, .{ .iterate = true });
