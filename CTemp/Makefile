@@ -46,7 +46,7 @@ else
 endif
 
 ifeq ($(OPTIMIZATION), debug)
-	FLAGS += -Doptimize=debug
+	FLAGS += -Doptimize=Debug
 else ifeq ($(OPTIMIZATION), safe)
 	FLAGS += -Doptimize=ReleaseSafe
 else ifeq ($(OPTIMIZATION), fast)
