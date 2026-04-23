@@ -1,8 +1,8 @@
 .{
-    .name = .ZigOriginalTemp,
+    .name = .ZigTemp,
     .version = "0.0.0",
-    .fingerprint = 0x9f6509bbaf2d0620,
-    .minimum_zig_version = "0.15.1",
+    .fingerprint = 0x940569a0c469bd3f,
+    .minimum_zig_version = "0.16.0",
     .dependencies = .{
         .raylib = .{
             .path = "raylib",

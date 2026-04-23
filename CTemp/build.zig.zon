@@ -2,7 +2,7 @@
     .name = .CTemp,
     .version = "0.0.0",
     .fingerprint = 0x5354206c593836da,
-    .minimum_zig_version = "0.15.1",
+    .minimum_zig_version = "0.16.0",
     .dependencies = .{
         .raylib = .{
             .path = "raylib",

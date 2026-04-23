@@ -14,8 +14,8 @@ struct for C in TempHelpers as I've found it to be useful when making my game. S
 zig build system for easier cross-compilation, you will need to modify build.zig and build.zig.zon to
 properly change the name of your game.
 
-- ZigOriginalTemp uses the actual C version of raylib along with @cImport, while
-ZigBindingsTemp uses the Zig bindings for raylib. Both are effectively the same thing.
+- ZigTemp uses the actual C version of raylib along with @cImport.
+An outdated version of ZigTemp that uses the raylib-zig bindings can be found in OLD. 
 You will also need to modify build.zig and build.zig.zon to properly change the name of
 your game (along with the fingerprint).
 
@@ -25,4 +25,4 @@ so it's pretty simple.
 
 That's about it!
 
-Current version: 1.0.4
+Current version: 1.0.5

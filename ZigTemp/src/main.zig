@@ -10,7 +10,7 @@ pub fn main() anyerror!void {
     const screenWidth = 800;
     const screenHeight = 450;
 
-    crl.InitWindow(screenWidth, screenHeight, "ZigOriginalTemp");
+    crl.InitWindow(screenWidth, screenHeight, "ZigTemp");
     defer crl.CloseWindow();
     
     const blob = crl.LoadTexture("res/blob.png");

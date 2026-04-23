@@ -9,11 +9,6 @@ pub fn build(b: *std.Build) !void {
         .target = target,
         .optimize = optimize,
     });
-
-    const exe = b.addExecutable(.{
-        .name = "ZigOriginalTemp",
-        .root_module = exe_mod,
-    });
     
     const raylib_dep = b.dependency("raylib", .{
         .target = target,
@@ -22,14 +17,19 @@ pub fn build(b: *std.Build) !void {
     });
     
     const raylib_artifact = raylib_dep.artifact("raylib");
-    exe.linkLibrary(raylib_artifact);
+    exe_mod.linkLibrary(raylib_artifact);
     
     const sdk_path_opt = b.option([]const u8, "macos-sdk-path", "Path to macOS SDK");
     
     if (sdk_path_opt) |sdk_path| {
         const full_path = try std.fs.path.join(b.allocator, &[_][]const u8{sdk_path, "System/Library/Frameworks"});
-        exe.addSystemFrameworkPath(b.path(full_path));
+        exe_mod.addSystemFrameworkPath(b.path(full_path));
     }
+    
+    const exe = b.addExecutable(.{
+        .name = "ZigTemp",
+        .root_module = exe_mod,
+    });
     
     b.installArtifact(exe);
     
