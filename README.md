@@ -21,8 +21,9 @@ your game (along with the fingerprint).
 
 - OdinTemp has been really dumbed down, and I haven't added support for cross-compilation
 in the makefile yet. It also uses vendor:raylib, which should come with your odin installation,
-so it's pretty simple.
+so it's pretty simple. A version that can also compile to the web using emscripten can be found at
+OdinWebTemp.
 
 That's about it!
 
-Current version: 1.0.5
+Current version: 1.0.6
