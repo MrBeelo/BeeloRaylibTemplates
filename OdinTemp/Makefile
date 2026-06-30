@@ -1,7 +1,7 @@
 #--SETTINGS--
 
 # Directory in which there are source files.
-SOURCE_DIRECTORY := src
+BASE_SOURCE_DIRECTORY := src
 
 # Directory in which there are resources (like images, sounds, etc.).
 RESOURCES_DIRECTORY := res
@@ -32,7 +32,7 @@ EMCC := /usr/lib/emscripten/emcc
 
 #--SCRIPT--
 
-SOURCE_DIRECTORY := $(SOURCE_DIRECTORY)/$(MODE)
+SOURCE_DIRECTORY := $(BASE_SOURCE_DIRECTORY)/$(MODE)
 OUTPUT_DIRECTORY := $(BASE_OUTPUT_DIRECTORY)/$(MODE)
 STRICT_FLAG := $(if $(filter true,$(STRICT)),-vet -strict-style)
 build: build-$(MODE)
