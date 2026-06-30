@@ -1,4 +1,4 @@
-package main_web
+package web
 
 import "core:mem"
 import "core:c"
