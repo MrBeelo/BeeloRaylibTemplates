@@ -48,7 +48,7 @@ endif
 
 ODIN_WEB_BUILD_FLAGS = -target:js_wasm32 -build-mode:obj -define:RAYLIB_WASM_LIB=env.o -define:RAYGUI_WASM_LIB=env.o $(STRICT_FLAG) -out:$(OUTPUT_DIRECTORY)/game.wasm.o
 WEB_FILES := $(OUTPUT_DIRECTORY)/game.wasm.o $(ODIN_PATH)/vendor/raylib/wasm/libraylib.a $(ODIN_PATH)/vendor/raylib/wasm/libraygui.a
-WEB_FLAGS := -sEXPORTED_RUNTIME_METHODS=['HEAPF32'] -sUSE_GLFW=3 -sWASM_BIGINT -sWARN_ON_UNDEFINED_SYMBOLS=0 -sASSERTIONS --shell-file $(SOURCE_DIRECTORY)/shell.html --preload-file $(RESOURCES_DIRECTORY)
+WEB_FLAGS := -sEXPORTED_RUNTIME_METHODS=['HEAPF32'] -sALLOW_MEMORY_GROWTH=1 -sUSE_GLFW=3 -sWASM_BIGINT -sWARN_ON_UNDEFINED_SYMBOLS=0 -sASSERTIONS --shell-file $(SOURCE_DIRECTORY)/shell.html --preload-file $(RESOURCES_DIRECTORY)
 
 build-web:
 	mkdir -p $(OUTPUT_DIRECTORY)
