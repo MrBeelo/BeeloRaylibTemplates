@@ -151,7 +151,7 @@ cyberFontData := [CYBER_STYLE_FONT_ATLAS_COMP_SIZE]u8 { 0xed,
     0x00, 0x00, 0x98, 0xe1, 0xf7, 0x7f, 0xce, 0x03, 0x88, 0x7f, 0xe0, 0xdb, 0xc5, 0xff, 0xff, 0x00,
 }
 
-cyberFontRects := [188]rl.Rectangle {
+cyberFontRecs := [188]rl.Rectangle {
 	{ 4, 4, 4 , 14 },
     { 16, 4, 1 , 8 },
     { 25, 4, 4 , 3 },
@@ -549,7 +549,7 @@ GuiLoadStyleCyber :: proc() {
 	rec_ptr, rec_err := mem.alloc(int(font.glyphCount) * size_of(rl.Rectangle))
 	if rec_err != nil do panic("Font rec allocation error!")
 	font.recs = cast([^]rl.Rectangle)rec_ptr
-	copy(font.recs[:font.glyphCount], cyberFontRects[:font.glyphCount])
+	copy(font.recs[:font.glyphCount], cyberFontRecs[:font.glyphCount])
 
 	glyph_ptr, glyph_err := mem.alloc(int(font.glyphCount) * size_of(rl.GlyphInfo))
 	if glyph_err != nil do panic("Font glyph allocation error!")
