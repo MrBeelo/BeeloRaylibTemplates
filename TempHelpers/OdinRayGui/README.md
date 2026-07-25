@@ -1,1 +1,0 @@
-Small Odin example showcasing raygui with both .rgs and built-in formats!

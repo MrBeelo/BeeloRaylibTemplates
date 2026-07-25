@@ -1,21 +1,14 @@
-Hello :)
+## Hello :)  
 
 This is a collection of templates that I use for all of my games.  
 All of them include a simple makefile that you can use to build your game.  
-All templates non-Odin uses git submodules, so make sure to clone those as well.  
+They are all organised into simple directories with the language's name.  
 
-Some notes about them:  
+#### Each directory may also have:  
+- README.md: Explaining something specific about the template.  
+- EXTRAS: Some tool I found helpful when developing with the language.  
+- OLD: Old templates that are either outdated or improved upon.  
 
-- CTemp also works for C++ if set so in the makefile/build command. I also added a vector
-struct for C in TempHelpers as I've found it to be useful when making my game. Since it uses the
-zig build system for easier cross-compilation, you will need to modify build.zig and build.zig.zon to
-properly change the name of your game.
+Also: some templates (notably ones that use the Zig build system) use git submodules!  
 
-- ZigTemp uses the actual C version of raylib along with @cImport.
-An outdated version of ZigTemp that uses the raylib-zig bindings can be found in OLD. 
-You will also need to modify build.zig and build.zig.zon to properly change the name of
-your game (along with the fingerprint).
-
-That's about it!  
-
-Current version: 1.0.7
+Current version: 1.8  
