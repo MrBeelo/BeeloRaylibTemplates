@@ -9,6 +9,8 @@ They are all organised into simple directories with the language's name.
 - EXTRAS: Some tool I found helpful when developing with the language.  
 - OLD: Old templates that are either outdated or improved upon.  
 
-Also: some templates (notably ones that use the Zig build system) use git submodules!  
+#### A few notes:  
+- Some templates (notably ones that use the Zig build system) use git submodules!  
+- All of my makefiles use unix commands, so cmd.exe for windows won't work.  
 
-Current version: 1.8  
+Current version: 1.9  
