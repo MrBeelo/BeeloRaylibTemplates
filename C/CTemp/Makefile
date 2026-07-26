@@ -4,14 +4,10 @@
 # This version uses precompiled raylib binaries (libraylib.a), that can be found
 # on the releases page of Raylib's GitHub.
 # 
-# You will need the following compilers:
+# You will need the following compiler(s):
 # Windows, Linux -> gcc
 # MacOS -> clang
 # WebAssembly -> emcc
-# 
-# Note: This currently only builds a single file (set to main.c but can be changed)
-# Support for more files may be added in the future. The idea is that all other
-# C files are #included in the main one.
 # 
 # Note: WebAssembly is supported, but it uses ASYNCIFY to dumb down the process.
 # I think it's worth it, even though there might be a performace hit...
@@ -31,12 +27,12 @@ BASE_EXECUTABLE_NAME := CTemp
 # Run the program immediately after exporting?
 RUN := true
 
-# C / C++ version. Some examples: c99, c11, c++20
-VERSION := c99
+# Includes the C++ standard library, and changes the extension used to .cpp
+USE_CPP := false
 
-# If the compiler should include the C++ stdlib.
-# You should definitely set this to true if using C++.
-INCLUDE_CPP_STANDARD_LIBRARY := true
+# Versions of C and C++ respectively to use.
+C_VERSION := c99
+CPP_VERSION := c++20
 
 # Additional compiler flags to pass.
 # -Os optimizes code for size.
@@ -47,9 +43,6 @@ EXTRA_COMPILER_FLAGS := -Os -Wall
 
 # Directory of all source files (.c / .cpp files).
 SOURCE_DIR := src
-
-# The main entry point file. Don't forget to change to *.cpp if using C++!
-MAIN_FILE := $(SOURCE_DIR)/main.c
 
 # Directory of all resources. This will be copied over to the binary folder,
 # or compiled into a .data file for webassembly.
@@ -68,8 +61,6 @@ BASE_OUTPUT_DIR := bin
 WEB_SHELL_DIR := $(RESOURCE_DIR)/shell.html
 
 # Used to differentiate between builds from different platforms.
-# I don't recommend changing these.
-LIBRARY_DIR := $(BASE_LIBRARY_DIR)/$(TARGET_PLATFORM)
 OUTPUT_DIR := $(BASE_OUTPUT_DIR)/$(TARGET_PLATFORM)
 
 #----------------#
@@ -83,15 +74,23 @@ COMPILER := gcc
 LIBRARY_FLAGS := -lraylib
 
 # This will be changed on webassembly (only really needed for webassembly and macos).
+LIBRARY_DIR := $(BASE_LIBRARY_DIR)/$(TARGET_PLATFORM)
 LIBRARY_PATH := $(LIBRARY_DIR)/libraylib.a
 
 # This will be changed on the platforms that need an extra suffix (like windows and webassembly).
 EXECUTABLE_NAME = $(BASE_EXECUTABLE_NAME)
 
-# Manage compiler flags and add C++ support if needed.
-COMPILER_FLAGS := $(EXTRA_COMPILER_FLAGS) -std=$(VERSION)
-ifeq ($(INCLUDE_CPP_STANDARD_LIBRARY), true)
-	COMPILER_FLAGS += -lstdc++
+# This will be changed if USE_CPP is true
+EXTENSION := .c
+
+# Manage compiler flags and extension, and add C++ support if needed.
+COMPILER_FLAGS := $(EXTRA_COMPILER_FLAGS)
+
+ifeq ($(USE_CPP), true)
+	COMPILER_FLAGS += -std=$(CPP_VERSION) -lstdc++ 
+	EXTENSION = .cpp
+else
+	COMPILER_FLAGS += -std=$(C_VERSION)
 endif
 
 # Change compiler and library flags for windows.
@@ -126,7 +125,7 @@ build:
 	mkdir -p $(OUTPUT_DIR)
 
 	# Build command.
-	$(COMPILER) $(MAIN_FILE) -o $(OUTPUT_DIR)/$(EXECUTABLE_NAME) $(COMPILER_FLAGS) $(LIBRARY_PATH) -I $(INCLUDE_DIR) -L $(LIBRARY_DIR) $(LIBRARY_FLAGS)
+	$(COMPILER) $(SOURCE_DIR)/*$(EXTENSION) -o $(OUTPUT_DIR)/$(EXECUTABLE_NAME) $(COMPILER_FLAGS) $(LIBRARY_PATH) -I $(INCLUDE_DIR) -L $(LIBRARY_DIR) $(LIBRARY_FLAGS)
 
 # Copy the resource directory to the output directory.
 # This is useful when compressing the game for release,
