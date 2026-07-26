@@ -9,16 +9,16 @@
 # MacOS -> clang
 # WebAssembly -> emcc
 # 
-# Note 1: This currently only builds a single file (set to main.c but can be changed)
+# Note: This currently only builds a single file (set to main.c but can be changed)
 # Support for more files may be added in the future. The idea is that all other
 # C files are #included in the main one.
 # 
-# Note 2: C++ support hasn't been added yet.
-# 
-# Note 3: WebAssembly is supported, but it uses ASYNCIFY to dumb down the process.
+# Note: WebAssembly is supported, but it uses ASYNCIFY to dumb down the process.
 # I think it's worth it, even though there might be a performace hit...
 
-#--SETTINGS--
+#------------------#
+#     SETTINGS     #
+#------------------#
 
 # Basic Settings
 
@@ -31,64 +31,92 @@ BASE_EXECUTABLE_NAME := CTemp
 # Run the program immediately after exporting?
 RUN := true
 
-# Compiler flags to pass.
+# C / C++ version. Some examples: c99, c11, c++20
+VERSION := c99
+
+# If the compiler should include the C++ stdlib.
+# You should definitely set this to true if using C++.
+INCLUDE_CPP_STANDARD_LIBRARY := true
+
+# Additional compiler flags to pass.
 # -Os optimizes code for size.
-# -std=c99 sets the C version to c99, it can also be set to c89, c11, or c23.
 # -Wall enables compiler warnings. -Werror can also be set to treat them as errors.
-COMPILER_FLAGS := -Os -std=c99 -Wall
+EXTRA_COMPILER_FLAGS := -Os -Wall
 
 # Directory Settings
-# These don't need to be changed with the current folder structure!
 
+# Directory of all source files (.c / .cpp files).
 SOURCE_DIR := src
+
+# The main entry point file. Don't forget to change to *.cpp if using C++!
 MAIN_FILE := $(SOURCE_DIR)/main.c
+
+# Directory of all resources. This will be copied over to the binary folder,
+# or compiled into a .data file for webassembly.
 RESOURCE_DIR := res
+
+# Directory of all includes (.h / .hpp files).
 INCLUDE_DIR := $(SOURCE_DIR)/incl
+
+# Directory of raylib library (libraylib.a / libraylib.web.a file).
 BASE_LIBRARY_DIR := lib
+
+# Output directory.
 BASE_OUTPUT_DIR := bin
 
-# Used to differentiate between builds from different platforms.
-LIBRARY_DIR := $(BASE_LIBRARY_DIR)/$(TARGET_PLATFORM)
-OUTPUT_DIR := $(BASE_OUTPUT_DIR)/$(TARGET_PLATFORM)
+# Shell directory. This is only used for webassembly.
 WEB_SHELL_DIR := $(RESOURCE_DIR)/shell.html
 
-#--SCRIPT--
+# Used to differentiate between builds from different platforms.
+# I don't recommend changing these.
+LIBRARY_DIR := $(BASE_LIBRARY_DIR)/$(TARGET_PLATFORM)
+OUTPUT_DIR := $(BASE_OUTPUT_DIR)/$(TARGET_PLATFORM)
 
-# Note: these are just placeholders, they will be changed depending on the platform.
+#----------------#
+#     SCRIPT     #
+#----------------#
+
+# Compiler to be used. This is going to be changed on macos and webassembly.
 COMPILER := gcc
+
+# Library flags. This is different on every platform, so it's a placeholder for now.
 LIBRARY_FLAGS := -lraylib
+
+# This will be changed on webassembly (only really needed for webassembly and macos).
+LIBRARY_PATH := $(LIBRARY_DIR)/libraylib.a
 
 # This will be changed on the platforms that need an extra suffix (like windows and webassembly).
 EXECUTABLE_NAME = $(BASE_EXECUTABLE_NAME)
 
-# Used for webassembly only.
-WEB_LIBRARY :=
+# Manage compiler flags and add C++ support if needed.
+COMPILER_FLAGS := $(EXTRA_COMPILER_FLAGS) -std=$(VERSION)
+ifeq ($(INCLUDE_CPP_STANDARD_LIBRARY), true)
+	COMPILER_FLAGS += -lstdc++
+endif
 
-# Change compiler and flags for windows.
+# Change compiler and library flags for windows.
 ifeq ($(TARGET_PLATFORM), $(filter $(TARGET_PLATFORM), win32_mingw-w64 win64_mingw-w64))
-	COMPILER = gcc
 	LIBRARY_FLAGS = -lraylib -lopengl32 -lgdi32 -lwinmm -lmingw32
 	EXECUTABLE_NAME = $(BASE_EXECUTABLE_NAME).exe
 endif
 
-# Change compiler and flags for macos.
+# Change compiler and library flags for macos.
 # Not tested well, may not work! (I don't have an apple machine...)
 ifeq ($(TARGET_PLATFORM), macos)
 	COMPILER = clang
 	LIBRARY_FLAGS = -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL
 endif
 
-# Change compiler and flags for linux.
+# Change compiler and library flags for linux.
 ifeq ($(TARGET_PLATFORM), $(filter $(TARGET_PLATFORM), linux_amd64 linux_arm64 linux_i386))
-	COMPILER = gcc
 	LIBRARY_FLAGS = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 endif
 
-# Change compiler and flags for webassembly.
+# Change compiler and library flags for webassembly.
 ifeq ($(TARGET_PLATFORM), webassembly)
 	COMPILER = emcc
 	LIBRARY_FLAGS = -s USE_GLFW=3 -s ASYNCIFY -s ALLOW_MEMORY_GROWTH=1 --shell-file $(WEB_SHELL_DIR) --preload-file $(RESOURCE_DIR)
-	WEB_LIBRARY = $(LIBRARY_DIR)/libraylib.web.a
+	LIBRARY_PATH = $(LIBRARY_DIR)/libraylib.web.a
 	EXECUTABLE_NAME = $(BASE_EXECUTABLE_NAME).html
 endif
 
@@ -98,7 +126,7 @@ build:
 	mkdir -p $(OUTPUT_DIR)
 
 	# Build command.
-	$(COMPILER) $(MAIN_FILE) -o $(OUTPUT_DIR)/$(EXECUTABLE_NAME) $(COMPILER_FLAGS) $(WEB_LIBRARY) -I $(INCLUDE_DIR) -L $(LIBRARY_DIR) $(LIBRARY_FLAGS)
+	$(COMPILER) $(MAIN_FILE) -o $(OUTPUT_DIR)/$(EXECUTABLE_NAME) $(COMPILER_FLAGS) $(LIBRARY_PATH) -I $(INCLUDE_DIR) -L $(LIBRARY_DIR) $(LIBRARY_FLAGS)
 
 # Copy the resource directory to the output directory.
 # This is useful when compressing the game for release,
@@ -115,11 +143,11 @@ ifeq ($(TARGET_PLATFORM), webassembly)
 	mv $(OUTPUT_DIR)/$(EXECUTABLE_NAME) $(OUTPUT_DIR)/index.html
 endif
 
-# Run the program if RUN is set to true.
+# Run the program in some way if RUN is set to true.
 ifeq ($(RUN), true)
 
 ifneq ($(TARGET_PLATFORM), webassembly)
-	# Non-WebAssembly: Just run the application.
+	# Desktop: Just run the application.
 	./$(OUTPUT_DIR)/$(EXECUTABLE_NAME)
 else
 	# WebAssembly: Run a python server on the output directory.
