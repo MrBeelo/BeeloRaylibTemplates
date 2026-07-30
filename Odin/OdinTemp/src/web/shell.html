@@ -14,14 +14,13 @@
 			margin: 0px; 
 			overflow: hidden; 
 			background-color: black;
+			display: grid;
+			place-items: center;
+			height: 100vh;
 		}
 		canvas.game_canvas { 
 			border: 0px none; 
 			background-color: black;
-			padding-left: 0;
-			padding-right: 0;
-			margin-left: auto;
-			margin-right: auto;
 			display: block;
 		}
 	</style>
@@ -41,7 +40,8 @@
 					...imports
 				}
 
-				return WebAssembly.instantiateStreaming(fetch("index.wasm"), newImports).then(function(output) {
+				const wasmFile = document.currentScript.src.replace(/\.js$/, ".wasm");
+				return WebAssembly.instantiateStreaming(fetch(wasmFile), newImports).then(function(output) {
 					var e = output.instance.exports;
 					odinMemoryInterface.setExports(e);
 					odinMemoryInterface.setMemory(e.memory);
