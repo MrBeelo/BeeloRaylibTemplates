@@ -10,7 +10,7 @@
 # WebAssembly -> emcc
 # 
 # Note: WebAssembly is supported, but it uses ASYNCIFY to dumb down the process.
-# I think it's worth it, even though there might be a performace hit...
+# I think it's worth it, even though there might be a small performace hit...
 
 #------------------#
 #     SETTINGS     #
@@ -48,17 +48,17 @@ SOURCE_DIR := src
 # or compiled into a .data file for webassembly.
 RESOURCE_DIR := res
 
-# Directory of all includes (.h / .hpp files).
-INCLUDE_DIR := $(SOURCE_DIR)/incl
-
 # Directory of raylib library (libraylib.a / libraylib.web.a file).
 BASE_LIBRARY_DIR := lib
 
 # Output directory.
 BASE_OUTPUT_DIR := bin
 
+# Directory of additional includes (.h / .hpp files).
+INCLUDE_DIR := $(SOURCE_DIR)/incl
+
 # Shell directory. This is only used for webassembly.
-WEB_SHELL_DIR := $(RESOURCE_DIR)/shell.html
+WEB_SHELL := $(SOURCE_DIR)/shell.html
 
 # Used to differentiate between builds from different platforms.
 OUTPUT_DIR := $(BASE_OUTPUT_DIR)/$(TARGET_PLATFORM)
@@ -67,34 +67,35 @@ OUTPUT_DIR := $(BASE_OUTPUT_DIR)/$(TARGET_PLATFORM)
 #     SCRIPT     #
 #----------------#
 
-# Compiler to be used. This is going to be changed on macos and webassembly.
-COMPILER := gcc
-
-# Library flags. This is different on every platform, so it's a placeholder for now.
-LIBRARY_FLAGS := -lraylib
-
 # This will be changed on webassembly (only really needed for webassembly and macos).
 LIBRARY_DIR := $(BASE_LIBRARY_DIR)/$(TARGET_PLATFORM)
-LIBRARY_PATH := $(LIBRARY_DIR)/libraylib.a
-
-# This will be changed on the platforms that need an extra suffix (like windows and webassembly).
-EXECUTABLE_NAME = $(BASE_EXECUTABLE_NAME)
-
-# This will be changed if USE_CPP is true
-EXTENSION := .c
 
 # Manage compiler flags and extension, and add C++ support if needed.
 COMPILER_FLAGS := $(EXTRA_COMPILER_FLAGS)
+
+# This will be changed if USE_CPP is true
+EXTENSION := .c
 
 ifeq ($(USE_CPP), true)
 	COMPILER_FLAGS += -std=$(CPP_VERSION) -lstdc++ 
 	EXTENSION = .cpp
 else
 	COMPILER_FLAGS += -std=$(C_VERSION)
+	#EXTENSION = .c
 endif
+
+# Compiler to be used. This is going to be changed on macos and webassembly.
+COMPILER := gcc
+
+# Library flags. This is different on every platform, so it's a placeholder for now.
+LIBRARY_FLAGS := -lraylib
+
+# This will be changed on the platforms that need an extra suffix (like windows and webassembly).
+EXECUTABLE_NAME = $(BASE_EXECUTABLE_NAME)
 
 # Change compiler and library flags for windows.
 ifeq ($(TARGET_PLATFORM), $(filter $(TARGET_PLATFORM), win32_mingw-w64 win64_mingw-w64))
+	#COMPILER = gcc
 	LIBRARY_FLAGS = -lraylib -lopengl32 -lgdi32 -lwinmm -lmingw32
 	EXECUTABLE_NAME = $(BASE_EXECUTABLE_NAME).exe
 endif
@@ -103,19 +104,21 @@ endif
 # Not tested well, may not work! (I don't have an apple machine...)
 ifeq ($(TARGET_PLATFORM), macos)
 	COMPILER = clang
-	LIBRARY_FLAGS = -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL
+	LIBRARY_FLAGS = -lraylib -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL
+	#EXECUTABLE_NAME = $(BASE_EXECUTABLE_NAME)
 endif
 
 # Change compiler and library flags for linux.
 ifeq ($(TARGET_PLATFORM), $(filter $(TARGET_PLATFORM), linux_amd64 linux_arm64 linux_i386))
+	#COMPILER = gcc
 	LIBRARY_FLAGS = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+	#EXECUTABLE_NAME = $(BASE_EXECUTABLE_NAME)
 endif
 
 # Change compiler and library flags for webassembly.
 ifeq ($(TARGET_PLATFORM), webassembly)
 	COMPILER = emcc
-	LIBRARY_FLAGS = -s USE_GLFW=3 -s ASYNCIFY -s ALLOW_MEMORY_GROWTH=1 --shell-file $(WEB_SHELL_DIR) --preload-file $(RESOURCE_DIR)
-	LIBRARY_PATH = $(LIBRARY_DIR)/libraylib.web.a
+	LIBRARY_FLAGS = -lraylib.web -s USE_GLFW=3 -s ASYNCIFY -s ALLOW_MEMORY_GROWTH=1 --shell-file $(WEB_SHELL) --preload-file $(WEB_SHELL) --preload-file $(RESOURCE_DIR)
 	EXECUTABLE_NAME = $(BASE_EXECUTABLE_NAME).html
 endif
 
@@ -125,7 +128,7 @@ build:
 	mkdir -p $(OUTPUT_DIR)
 
 	# Build command.
-	$(COMPILER) $(SOURCE_DIR)/*$(EXTENSION) -o $(OUTPUT_DIR)/$(EXECUTABLE_NAME) $(COMPILER_FLAGS) $(LIBRARY_PATH) -I $(INCLUDE_DIR) -L $(LIBRARY_DIR) $(LIBRARY_FLAGS)
+	$(COMPILER) $(SOURCE_DIR)/*$(EXTENSION) -o $(OUTPUT_DIR)/$(EXECUTABLE_NAME) $(COMPILER_FLAGS) -I $(INCLUDE_DIR) -L $(LIBRARY_DIR) $(LIBRARY_FLAGS)
 
 # Copy the resource directory to the output directory.
 # This is useful when compressing the game for release,
