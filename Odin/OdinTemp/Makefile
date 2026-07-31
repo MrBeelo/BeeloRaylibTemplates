@@ -30,7 +30,7 @@ STRICT := true
 DEBUG := true
 
 # What should be the target? Options: desktop, web
-MODE := web
+MODE := desktop
 
 # Copy resources over to the output directory? (desktop only)
 COPY_RESOURCES := true
@@ -112,7 +112,7 @@ build-web:
 
 # If RUN is set to true, start a python server on the output directory.
 ifeq ($(RUN), true)
-	cd $(OUTPUT_DIRECTORY) && python -m http.server 8080
+	cd $(OUTPUT_DIRECTORY) && emrun .
 endif
 
 # Clean the output directory.

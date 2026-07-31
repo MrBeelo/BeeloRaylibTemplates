@@ -153,7 +153,7 @@ ifneq ($(TARGET_PLATFORM), webassembly)
 	./$(OUTPUT_DIR)/$(EXECUTABLE_NAME)
 else
 	# WebAssembly: Run a python server on the output directory.
-	cd $(OUTPUT_DIR) && python -m http.server 8080
+	cd $(OUTPUT_DIR) && emrun .
 endif
 
 endif
