@@ -1,7 +1,7 @@
-#include "incl/raylib.h"
+#include "raylib.h"
 
 #define RAYGUI_IMPLEMENTATION
-#include "incl/raygui.h"
+#include "raygui.h"
 
 int main() {
     InitWindow(400, 200, "raygui - controls test suite");

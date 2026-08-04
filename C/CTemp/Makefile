@@ -11,6 +11,10 @@
 # 
 # Note: WebAssembly is supported, but it uses ASYNCIFY to dumb down the process.
 # I think it's worth it, even though there might be a small performace hit...
+# 
+# Note: I included a .clangd file for the LSP. In it, remove the -xc flag if working
+# with C++, and change the -I flag to change the include path as needed.
+# (This is purely cosmetic, of course)
 
 #------------------#
 #     SETTINGS     #
@@ -55,17 +59,17 @@ BASE_LIBRARY_DIR := lib
 BASE_OUTPUT_DIR := bin
 
 # Directory of additional includes (.h / .hpp files).
-INCLUDE_DIR := $(SOURCE_DIR)/incl
+INCLUDE_DIR := incl
 
 # Shell directory. This is only used for webassembly.
-WEB_SHELL := $(SOURCE_DIR)/shell.html
-
-# Used to differentiate between builds from different platforms.
-OUTPUT_DIR := $(BASE_OUTPUT_DIR)/$(TARGET_PLATFORM)
+WEB_SHELL := $(INCLUDE_DIR)/shell.html
 
 #----------------#
 #     SCRIPT     #
 #----------------#
+
+# Used to differentiate between builds from different platforms.
+OUTPUT_DIR := $(BASE_OUTPUT_DIR)/$(TARGET_PLATFORM)
 
 # This will be changed on webassembly (only really needed for webassembly and macos).
 LIBRARY_DIR := $(BASE_LIBRARY_DIR)/$(TARGET_PLATFORM)

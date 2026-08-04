@@ -8,6 +8,3 @@ read_entire_file :: proc(name: string, allocator := context.allocator, loc := #c
 write_entire_file :: proc(name: string, data: []byte, truncate := true) -> (success: bool) {
 	return _write_entire_file(name, data, truncate)
 }
-
-read_directory_by_path :: proc()
-

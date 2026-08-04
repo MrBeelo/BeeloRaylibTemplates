@@ -2,14 +2,8 @@
 #     SETTINGS     #
 #------------------#
 
-# Directory in which there are source files.
-BASE_SOURCE_DIRECTORY := src
-
-# Directory in which there are resources (like images, sounds, etc.).
-RESOURCES_DIRECTORY := res
-
-# Directory in which the program along with the resources will be outputted in.
-BASE_OUTPUT_DIRECTORY := bin
+# What should be the target? Options: desktop, web
+MODE := desktop
 
 # The executable's name (without any extensions).
 EXECUTABLE_NAME := OdinTemp
@@ -29,14 +23,20 @@ STRICT := true
 # Enable debug symbols?
 DEBUG := true
 
-# What should be the target? Options: desktop, web
-MODE := desktop
-
 # Copy resources over to the output directory? (desktop only)
 COPY_RESOURCES := true
 
 # Odin's path. (web only)
 ODIN_PATH := $(shell odin root)
+
+# Directory in which there are source files.
+BASE_SOURCE_DIRECTORY := src
+
+# Directory in which there are resources (like images, sounds, etc.).
+RESOURCES_DIRECTORY := res
+
+# Directory in which the program along with the resources will be outputted in.
+BASE_OUTPUT_DIRECTORY := bin
 
 #----------------#
 #     SCRIPT     #
