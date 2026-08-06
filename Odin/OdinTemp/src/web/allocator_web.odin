@@ -70,20 +70,20 @@ emscripten_allocator_proc :: proc(
 
 	switch mode {
 	case .Alloc:
-		if PRINT_ALLOCATIONS do fmt.printfln("Allocated %d bytes from %v", size, location)
+		if PRINT_ALLOCATIONS do fmt.printfln("ALLOC: Allocated %d bytes from %v", size, location)
 		return aligned_alloc(size, alignment, true)
 
 	case .Alloc_Non_Zeroed:
-		if PRINT_ALLOCATIONS do fmt.printfln("Allocated %d non-zeroed bytes from %v", size, location)
+		if PRINT_ALLOCATIONS do fmt.printfln("ALLOC: Allocated %d non-zeroed bytes from %v", size, location)
 		return aligned_alloc(size, alignment, false)
 
 	case .Free:
-		if PRINT_ALLOCATIONS do fmt.printfln("Freed %d bytes from %v", size, location)
+		if PRINT_ALLOCATIONS do fmt.printfln("ALLOC: Freed %d bytes from %v", old_size, location)
 		aligned_free(old_memory)
 		return nil, nil
 
 	case .Resize:
-		if PRINT_ALLOCATIONS do fmt.printfln("Resized %d -> %d bytes from %v", old_size, size, location)
+		if PRINT_ALLOCATIONS do fmt.printfln("ALLOC: Resized %d -> %d bytes from %v", old_size, size, location)
 		if old_memory == nil {
 			return aligned_alloc(size, alignment, true)
 		}
@@ -98,7 +98,7 @@ emscripten_allocator_proc :: proc(
 		return bytes, nil
 
 	case .Resize_Non_Zeroed:
-		if PRINT_ALLOCATIONS do fmt.printfln("Resized %d -> %d non-zeroed bytes from %v", old_size, size, location)
+		if PRINT_ALLOCATIONS do fmt.printfln("ALLOC: Resized %d -> %d non-zeroed bytes from %v", old_size, size, location)
 		if old_memory == nil {
 			return aligned_alloc(size, alignment, false)
 		}
