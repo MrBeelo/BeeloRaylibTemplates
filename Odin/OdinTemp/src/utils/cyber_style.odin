@@ -9,7 +9,7 @@ import "core:mem"
 GuiStyleProp :: struct {
     controlId: rl.GuiControl,
     propertyId: int,
-    propertyValue: int,
+    propertyValue: uint,
 }
 
 CYBER_STYLE_PROPS_COUNT :: 17
