@@ -3,17 +3,24 @@
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 
+Sound sound;
+
 int main() {
     InitWindow(400, 200, "raygui - controls test suite");
     SetTargetFPS(60);
+    InitAudioDevice();
 
     bool showMessageBox = false;
+    sound = LoadSound("res/sound.mp3");
 
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
 
-        if (GuiButton((Rectangle){ 24, 24, 120, 30 }, "#191#Show Message")) showMessageBox = true;
+        if (GuiButton((Rectangle){ 24, 24, 120, 30 }, "#191#Show Message")) { 
+            showMessageBox = true;
+            PlaySound(sound);
+        }
 
         if (showMessageBox) {
             int btnActive = -1;
@@ -25,6 +32,7 @@ int main() {
         EndDrawing();
     }
 
+    UnloadSound(sound);
     CloseWindow();
     return 0;
 }

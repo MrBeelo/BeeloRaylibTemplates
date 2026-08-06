@@ -23,56 +23,57 @@
 # Basic Settings
 
 # Options can be found as the different folders of the lib/ directory.
-TARGET_PLATFORM := linux_amd64
+TARGET_PLATFORM ?= linux_amd64
 
 # This should be standalone, no matter the operating system, as it will be changed later (no .<suffix>)
-BASE_EXECUTABLE_NAME := CTemp
+BASE_EXECUTABLE_NAME ?= CTemp
 
 # Run the program immediately after exporting?
-RUN := true
+RUN ?= true
 
 # Includes the C++ standard library, and changes the extension used to .cpp
-USE_CPP := false
+USE_CPP ?= false
 
 # Versions of C and C++ respectively to use.
-C_VERSION := c99
-CPP_VERSION := c++20
+C_VERSION ?= c99
+CPP_VERSION ?= c++20
 
 # Additional compiler flags to pass.
 # -Os optimizes code for size.
 # -Wall enables compiler warnings. -Werror can also be set to treat them as errors.
-EXTRA_COMPILER_FLAGS := -Os -Wall
+EXTRA_COMPILER_FLAGS ?= -Os -Wall
 
 # Directory Settings
 
 # Directory of all source files (.c / .cpp files).
-SOURCE_DIR := src
+SOURCE_DIR ?= src
 
 # Directory of all resources. This will be copied over to the binary folder,
 # or compiled into a .data file for webassembly.
-RESOURCE_DIR := res
+RESOURCE_DIR ?= res
 
 # Directory of raylib library (libraylib.a / libraylib.web.a file).
-BASE_LIBRARY_DIR := lib
+BASE_LIBRARY_DIR ?= lib
 
 # Output directory.
-BASE_OUTPUT_DIR := bin
+BASE_OUTPUT_DIR ?= bin
 
 # Directory of additional includes (.h / .hpp files).
-INCLUDE_DIR := incl
+INCLUDE_DIR ?= incl
+
+# Directory for custom headers.
+GLOBAL_INCLUDE_DIR ?= $(BASE_INCLUDE_DIR)/global
 
 # Shell directory. This is only used for webassembly.
-WEB_SHELL := $(INCLUDE_DIR)/shell.html
+WEB_SHELL ?= $(INCLUDE_DIR)/shell.html
 
 #----------------#
 #     SCRIPT     #
 #----------------#
 
-# Used to differentiate between builds from different platforms.
-OUTPUT_DIR := $(BASE_OUTPUT_DIR)/$(TARGET_PLATFORM)
-
-# This will be changed on webassembly (only really needed for webassembly and macos).
+# Full directories
 LIBRARY_DIR := $(BASE_LIBRARY_DIR)/$(TARGET_PLATFORM)
+OUTPUT_DIR := $(BASE_OUTPUT_DIR)/$(TARGET_PLATFORM)
 
 # Manage compiler flags and extension, and add C++ support if needed.
 COMPILER_FLAGS := $(EXTRA_COMPILER_FLAGS)
@@ -132,7 +133,7 @@ build:
 	mkdir -p $(OUTPUT_DIR)
 
 	# Build command.
-	$(COMPILER) $(SOURCE_DIR)/*$(EXTENSION) -o $(OUTPUT_DIR)/$(EXECUTABLE_NAME) $(COMPILER_FLAGS) -I $(INCLUDE_DIR) -L $(LIBRARY_DIR) $(LIBRARY_FLAGS)
+	$(COMPILER) $(SOURCE_DIR)/*$(EXTENSION) -o $(OUTPUT_DIR)/$(EXECUTABLE_NAME) $(COMPILER_FLAGS) -I $(GLOBAL_INCLUDE_DIR) -I $(INCLUDE_DIR) -L $(LIBRARY_DIR) $(LIBRARY_FLAGS)
 
 # Copy the resource directory to the output directory.
 # This is useful when compressing the game for release,

@@ -1,4 +1,4 @@
 CompileFlags:
   Add:
     - -xc
-    - -I../incl
+    - -I../incl/
