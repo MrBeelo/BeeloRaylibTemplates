@@ -1,4 +1,8 @@
 CompileFlags:
   Add:
     - -xc
-    - -I../incl/
+    - -std=c23
+    - -I../incl/raylib
+    - -I../incl/extra
+    - -I../raylib
+    - -I../extra

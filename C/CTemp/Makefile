@@ -1,7 +1,8 @@
-# MrBeelo's *basic* C template!
+########################################################################################
+#
+# MrBeelo's basic C template!
 # 
-# A more complex C template that uses Zig's build system can be found at CTempZBS
-# This version uses precompiled raylib binaries (libraylib.a), that can be found
+# This template uses precompiled raylib binaries (libraylib.a), that can be found
 # on the releases page of Raylib's GitHub.
 # 
 # You will need the following compiler(s):
@@ -9,12 +10,16 @@
 # MacOS -> clang
 # WebAssembly -> emcc
 # 
-# Note: WebAssembly is supported, but it uses ASYNCIFY to dumb down the process.
+# Note 1: WebAssembly is supported, but it uses ASYNCIFY to dumb down the process.
 # I think it's worth it, even though there might be a small performace hit...
 # 
-# Note: I included a .clangd file for the LSP. In it, remove the -xc flag if working
+# Note 2: I included a .clangd file for the LSP. In it, remove the -xc flag if working
 # with C++, and change the -I flag to change the include path as needed.
 # (This is purely cosmetic, of course)
+# 
+# Current raylib binary version: 6.1-dev
+# 
+########################################################################################
 
 #------------------#
 #     SETTINGS     #
@@ -30,6 +35,9 @@ BASE_EXECUTABLE_NAME ?= CTemp
 
 # Run the program immediately after exporting?
 RUN ?= true
+
+# Copy the program's resources on export? (desktop only)
+COPY_RESOURCES := true
 
 # Includes the C++ standard library, and changes the extension used to .cpp
 USE_CPP ?= false
@@ -58,14 +66,14 @@ BASE_LIBRARY_DIR ?= lib
 # Output directory.
 BASE_OUTPUT_DIR ?= bin
 
-# Directory of additional includes (.h / .hpp files).
-INCLUDE_DIR ?= incl
+# Base directory of additional includes (.h / .hpp files).
+BASE_INCLUDE_DIR ?= incl
 
-# Directory for custom headers.
-GLOBAL_INCLUDE_DIR ?= $(BASE_INCLUDE_DIR)/global
+# Subdirectories of the above.
+INCLUDE_DIRS ?= -I$(BASE_INCLUDE_DIR)/raylib -I$(BASE_INCLUDE_DIR)/extra
 
 # Shell directory. This is only used for webassembly.
-WEB_SHELL ?= $(INCLUDE_DIR)/shell.html
+WEB_SHELL ?= $(BASE_INCLUDE_DIR)/web/minshell.html
 
 #----------------#
 #     SCRIPT     #
@@ -133,14 +141,16 @@ build:
 	mkdir -p $(OUTPUT_DIR)
 
 	# Build command.
-	$(COMPILER) $(SOURCE_DIR)/*$(EXTENSION) -o $(OUTPUT_DIR)/$(EXECUTABLE_NAME) $(COMPILER_FLAGS) -I $(GLOBAL_INCLUDE_DIR) -I $(INCLUDE_DIR) -L $(LIBRARY_DIR) $(LIBRARY_FLAGS)
+	$(COMPILER) $(SOURCE_DIR)/*$(EXTENSION) -o $(OUTPUT_DIR)/$(EXECUTABLE_NAME) $(COMPILER_FLAGS) $(INCLUDE_DIRS) -L $(LIBRARY_DIR) $(LIBRARY_FLAGS)
 
 # Copy the resource directory to the output directory.
 # This is useful when compressing the game for release,
 # as the user would have to manually copy the resource folder.
 # Of course, this has no reason to be done in WebAssembly
 ifneq ($(TARGET_PLATFORM), webassembly)
+ifeq ($(COPY_RESOURCES), true)
 	cp -r $(RESOURCE_DIR) $(OUTPUT_DIR)
+endif
 endif
 
 # If on WebAssembly, rename the generated html file to index.html.
