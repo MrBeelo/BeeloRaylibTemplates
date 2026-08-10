@@ -56,7 +56,7 @@ DEBUG_FLAG := $(if $(filter true,$(DEBUG)),-debug)
 
 # Add .exe extension.
 ifeq ($(ADD_EXE), true)
-	EXECUTABLE_NAME += .exe
+	EXECUTABLE_NAME := $(EXECUTABLE_NAME).exe
 endif
 
 # Change the build target depending on the platform
@@ -85,7 +85,7 @@ endif
 ODIN_WEB_BUILD_FLAGS := -target:js_wasm32 -build-mode:obj -define:RAYLIB_WASM_LIB=env.o -define:RAYGUI_WASM_LIB=env.o $(STRICT_FLAG) $(DEBUG_FLAG) -out:$(OUTPUT_DIRECTORY)/game.wasm.obj
 
 # Outputted obj file and raylib library.
-WEB_FILES := $(OUTPUT_DIRECTORY)/game.wasm.obj $(ODIN_PATH)/vendor/raylib/wasm/libraylib.web.a $(ODIN_PATH)/vendor/raylib/wasm/libraygui.a
+WEB_FILES := $(OUTPUT_DIRECTORY)/game.wasm.obj $(BASE_SOURCE_DIRECTORY)/raylib/lib/webassembly/libraylib.web.a $(BASE_SOURCE_DIRECTORY)/raylib/lib/webassembly/libraygui.web.a
 
 # Some additional flags for emscripten.
 WEB_FLAGS := -sEXPORTED_RUNTIME_METHODS=['HEAPF32'] -sALLOW_MEMORY_GROWTH=1 -sUSE_GLFW=3 -sWASM_BIGINT -sWARN_ON_UNDEFINED_SYMBOLS=0 -sASSERTIONS --shell-file $(SOURCE_DIRECTORY)/shell.html --preload-file $(RESOURCES_DIRECTORY)
@@ -99,7 +99,7 @@ build-web:
 	odin build $(SOURCE_DIRECTORY) $(ODIN_WEB_BUILD_FLAGS)
 
 	# Copy over odin.js to the output directory.
-	cp $(ODIN_PATH)/core/sys/wasm/js/odin.js $(OUTPUT_DIRECTORY)
+	cp $(SOURCE_DIRECTORY)/odin.js $(OUTPUT_DIRECTORY)
 
 	# Second pass: emcc build command.
 	emcc -o $(OUTPUT_DIRECTORY)/$(EXECUTABLE_NAME).html $(WEB_FILES) $(WEB_FLAGS)

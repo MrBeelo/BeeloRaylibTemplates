@@ -1,6 +1,7 @@
 bin/
 zig-out/
 .zig-cache/
-raylib/
+C/CTemp/raylib/
+Zig/ZigTemp/raylib/
 raylib-zig/
 zig-pkg/
