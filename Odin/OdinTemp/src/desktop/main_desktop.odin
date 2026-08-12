@@ -1,6 +1,6 @@
 package desktop
 
-import rl "vendor:raylib"
+import rl "../raylib"
 import game ".."
 
 main :: proc() {

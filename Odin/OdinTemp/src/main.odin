@@ -1,7 +1,7 @@
 package main
 
 import "core:fmt"
-import rl "vendor:raylib"
+import rl "raylib"
 import "utils"
 
 should_close := false

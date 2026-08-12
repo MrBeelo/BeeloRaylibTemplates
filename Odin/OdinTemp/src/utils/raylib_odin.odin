@@ -3,8 +3,8 @@
 
 package utils
 
-import rl "vendor:raylib"
-import "vendor:raylib/rlgl"
+import rl "../raylib"
+import "../raylib/rlgl"
 import "core:unicode/utf8"
 
 // TEXT RELATED FUNCTIONS

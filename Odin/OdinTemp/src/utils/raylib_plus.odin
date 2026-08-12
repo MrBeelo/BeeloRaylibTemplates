@@ -2,7 +2,7 @@
 
 package utils
 
-import rl "vendor:raylib"
+import rl "../raylib"
 import "core:strings"
 import "core:unicode/utf8"
 import "core:strconv"

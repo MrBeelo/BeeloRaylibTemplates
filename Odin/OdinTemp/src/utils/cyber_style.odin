@@ -3,7 +3,7 @@
 
 package utils
 
-import rl "vendor:raylib"
+import rl "../raylib"
 import "core:mem"
 
 GuiStyleProp :: struct {
