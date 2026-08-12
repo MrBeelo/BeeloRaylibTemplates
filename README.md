@@ -13,4 +13,4 @@ They are all organised into simple directories with the language's name.
 - Some templates (notably ones that use the Zig build system) use git submodules!  
 - All of my makefiles use unix commands, so cmd.exe for windows won't work.  
 
-Current version: 1.23  
+Current version: 1.24  
