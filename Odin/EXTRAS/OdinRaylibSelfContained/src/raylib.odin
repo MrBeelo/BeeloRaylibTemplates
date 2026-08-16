@@ -1,124 +1,5 @@
 package main
 
-RAYLIB_SHARED :: #config(RAYLIB_SHARED, false)
-RAYLIB_WASM_LIB :: #config(RAYLIB_WASM_LIB, "../lib/webassembly/libraylib.web.a")
-RAYGUI_SHARED :: #config(RAYGUI_SHARED, false)
-RAYGUI_WASM_LIB :: #config(RAYGUI_WASM_LIB, "../lib/webassembly/libraygui.web.a")
-
-when ODIN_OS == .Windows {
-	@(extra_linker_flags="/NODEFAULTLIB:" + ("msvcrt" when RAYLIB_SHARED else "libcmt"))
-	foreign import raylib {
-		(
-			"../lib/win64_msvc16/raylibdll.lib" when RAYLIB_SHARED && ODIN_ARCH == .amd64 else 
-			"../lib/win64_msvc16/raylib.lib" when ODIN_ARCH == .amd64 else 
-			"../lib/win32_msvc16/raylibdll.lib" when RAYLIB_SHARED && ODIN_ARCH == .i386 else 
-			"../lib/win32_msvc16/raylib.lib" when ODIN_ARCH == .i386 else 
-			"../lib/winarm64_msvc16/raylibdll.lib" when RAYLIB_SHARED && ODIN_ARCH == .arm64 else 
-			"../lib/winarm64_msvc16/raylib.lib" when ODIN_ARCH == .arm64 else
-			"system:raylib"
-		),
-		"system:Winmm.lib",
-		"system:Gdi32.lib",
-		"system:User32.lib",
-		"system:Shell32.lib",
-	}
-} else when ODIN_OS == .Linux {
-	// Note(bumbread): I'm not sure why in `linux/` folder there are
-	// multiple copies of raylib.so, but since these bindings are for
-	// particular version of the library, I better specify it. Ideally,
-	// though, it's best specified in terms of major (.so.4)
-	foreign import raylib {
-		(
-			"../lib/linux_amd64/libraylib.so.6.0.0" when RAYLIB_SHARED && ODIN_ARCH == .amd64 else 
-			"../lib/linux_amd64/libraylib.a" when ODIN_ARCH == .amd64 else 
-			"../lib/linux_i386/libraylib.a" when ODIN_ARCH == .i386 else 
-			"../lib/linux_arm64/libraylib.so.6.0.0" when RAYLIB_SHARED && ODIN_ARCH == .arm64 else 
-			"../lib/linux_arm64/libraylib.a" when ODIN_ARCH == .arm64 else
-			"system:raylib"
-		),
-		"system:dl",
-		"system:pthread",
-		"system:X11",
-	}
-} else when ODIN_OS == .Darwin {
-	foreign import raylib {
-		"../lib/macos/libraylib.6.0.0.dylib" when RAYLIB_SHARED else "../lib/macos/libraylib.a",
-		"system:Cocoa.framework",
-		"system:OpenGL.framework",
-		"system:IOKit.framework",
-	}
-} else when ODIN_ARCH == .wasm32 || ODIN_ARCH == .wasm64p32 {
-	foreign import raylib {
-		RAYLIB_WASM_LIB,
-	}
-} else {
-	foreign import raylib "system:raylib"
-}
-
-when ODIN_OS == .Windows {
-	foreign import raygui {
-		(
-			"../lib/win64_msvc16/rayguidll.lib" when RAYGUI_SHARED && ODIN_ARCH == .amd64 else 
-			"../lib/win64_msvc16/raygui.lib" when ODIN_ARCH == .amd64 else 
-			"../lib/win32_msvc16/rayguidll.lib" when RAYGUI_SHARED && ODIN_ARCH == .i386 else 
-			"../lib/win32_msvc16/raygui.lib" when ODIN_ARCH == .i386 else 
-			"../lib/winarm64_msvc16/rayguidll.lib" when RAYGUI_SHARED && ODIN_ARCH == .arm64 else 
-			"../lib/winarm64_msvc16/raygui.lib" when ODIN_ARCH == .arm64 else
-			"system:raygui"
-		),
-	}
-} else when ODIN_OS == .Linux {
-	// Note(bumbread): I'm not sure why in `linux/` folder there are
-	// multiple copies of raygui.so, but since these bindings are for
-	// particular version of the library, I better specify it. Ideally,
-	// though, it's best specified in terms of major (.so.4)
-	foreign import raygui {
-		(
-			"../lib/linux_amd64/libraygui.so.5.0.0" when RAYGUI_SHARED && ODIN_ARCH == .amd64 else 
-			"../lib/linux_amd64/libraygui.a" when ODIN_ARCH == .amd64 else 
-			"../lib/linux_i386/libraygui.a" when ODIN_ARCH == .i386 else 
-			"../lib/linux_arm64/libraygui.so.5.0.0" when RAYGUI_SHARED && ODIN_ARCH == .arm64 else 
-			"../lib/linux_arm64/libraygui.a" when ODIN_ARCH == .arm64 else
-			"system:raygui"
-		),
-	}
-} else when ODIN_OS == .Darwin {
-	foreign import raygui {
-		"../lib/macos/libraygui.5.0.0.dylib" when RAYGUI_SHARED else "../lib/macos/libraygui.a",
-	}
-} else when ODIN_ARCH == .wasm32 || ODIN_ARCH == .wasm64p32 {
-	foreign import raygui {
-		RAYGUI_WASM_LIB,
-	}
-} else {
-	foreign import raygui "system:raygui"
-}
-
-// FOREIGN FUNCTIONS //
-
-@(default_calling_convention="c")
-foreign raylib {
-	InitWindow :: proc(width, height: i32, title: cstring) ---
-	CloseWindow :: proc() ---
-	SetConfigFlags :: proc(flags: ConfigFlags) ---
-	
-	LoadTexture :: proc(fileName: cstring) -> Texture2D ---
-	UnloadTexture :: proc(texture: Texture2D) ---
-	DrawTexture :: proc(texture: Texture2D, posX, posY: i32, tint: Color) ---
-
-	DrawText :: proc(text: cstring, posX, posY: i32, fontSize: i32, color: Color) ---
-	
-	WindowShouldClose :: proc() -> bool ---
-	BeginDrawing :: proc() ---
-	EndDrawing :: proc() ---
-	ClearBackground :: proc(color: Color) ---
-}
-
-@(default_calling_convention="c")
-foreign raygui {
-	GuiButton :: proc(bounds: Rectangle, text: cstring) -> i32 --- 
-}
-
 // STRUCTS / ENUMS //
 
 ConfigFlag :: enum u32 {
@@ -191,3 +72,124 @@ Color :: distinct [4]u8
 WHITE :: (Color){255, 255, 255, 255}
 RAYWHITE :: (Color){245, 245, 245, 255}
 LIGHTGRAY :: (Color){200, 200, 200, 255}
+
+// FOREIGN FUNCTIONS //
+
+@(default_calling_convention="c")
+foreign raylib {
+	InitWindow :: proc(width, height: i32, title: cstring) ---
+	CloseWindow :: proc() ---
+	SetConfigFlags :: proc(flags: ConfigFlags) ---
+	
+	LoadTexture :: proc(fileName: cstring) -> Texture2D ---
+	UnloadTexture :: proc(texture: Texture2D) ---
+	DrawTexture :: proc(texture: Texture2D, posX, posY: i32, tint: Color) ---
+
+	DrawText :: proc(text: cstring, posX, posY: i32, fontSize: i32, color: Color) ---
+	
+	WindowShouldClose :: proc() -> bool ---
+	BeginDrawing :: proc() ---
+	EndDrawing :: proc() ---
+	ClearBackground :: proc(color: Color) ---
+}
+
+@(default_calling_convention="c")
+foreign raygui {
+	GuiButton :: proc(bounds: Rectangle, text: cstring) -> i32 --- 
+}
+
+// IMPORTS //
+
+RAYLIB_SHARED :: #config(RAYLIB_SHARED, false)
+RAYLIB_WASM_LIB :: #config(RAYLIB_WASM_LIB, "../lib/webassembly/libraylib.web.a")
+RAYGUI_SHARED :: #config(RAYGUI_SHARED, false)
+RAYGUI_WASM_LIB :: #config(RAYGUI_WASM_LIB, "../lib/webassembly/libraygui.web.a")
+
+when ODIN_OS == .Windows {
+	@(extra_linker_flags="/NODEFAULTLIB:" + ("msvcrt" when RAYLIB_SHARED else "libcmt"))
+	foreign import raylib {
+		(
+			"../lib/win64_msvc16/raylibdll.lib" when RAYLIB_SHARED && ODIN_ARCH == .amd64 else 
+			"../lib/win64_msvc16/raylib.lib" when ODIN_ARCH == .amd64 else 
+			"../lib/win32_msvc16/raylibdll.lib" when RAYLIB_SHARED && ODIN_ARCH == .i386 else 
+			"../lib/win32_msvc16/raylib.lib" when ODIN_ARCH == .i386 else 
+			"../lib/winarm64_msvc16/raylibdll.lib" when RAYLIB_SHARED && ODIN_ARCH == .arm64 else 
+			"../lib/winarm64_msvc16/raylib.lib" when ODIN_ARCH == .arm64 else
+			"system:raylib"
+		),
+		"system:Winmm.lib",
+		"system:Gdi32.lib",
+		"system:User32.lib",
+		"system:Shell32.lib",
+	}
+} else when ODIN_OS == .Linux {
+	// Note(bumbread): I'm not sure why in `linux/` folder there are
+	// multiple copies of raylib.so, but since these bindings are for
+	// particular version of the library, I better specify it. Ideally,
+	// though, it's best specified in terms of major (.so.4)
+	foreign import raylib {
+		(
+			"../lib/linux_amd64/libraylib.so.600" when RAYLIB_SHARED && ODIN_ARCH == .amd64 else 
+			"../lib/linux_amd64/libraylib.a" when ODIN_ARCH == .amd64 else 
+			"../lib/linux_i386/libraylib.a" when ODIN_ARCH == .i386 else 
+			"../lib/linux_arm64/libraylib.so.600" when RAYLIB_SHARED && ODIN_ARCH == .arm64 else 
+			"../lib/linux_arm64/libraylib.a" when ODIN_ARCH == .arm64 else
+			"system:raylib"
+		),
+		"system:dl",
+		"system:pthread",
+		"system:X11",
+	}
+} else when ODIN_OS == .Darwin {
+	foreign import raylib {
+		"../lib/macos/libraylib.600.dylib" when RAYLIB_SHARED else "../lib/macos/libraylib.a",
+		"system:Cocoa.framework",
+		"system:OpenGL.framework",
+		"system:IOKit.framework",
+	}
+} else when ODIN_ARCH == .wasm32 || ODIN_ARCH == .wasm64p32 {
+	foreign import raylib {
+		RAYLIB_WASM_LIB,
+	}
+} else {
+	foreign import raylib "system:raylib"
+}
+
+when ODIN_OS == .Windows {
+	foreign import raygui {
+		(
+			"../lib/win64_msvc16/rayguidll.lib" when RAYGUI_SHARED && ODIN_ARCH == .amd64 else 
+			"../lib/win64_msvc16/raygui.lib" when ODIN_ARCH == .amd64 else 
+			"../lib/win32_msvc16/rayguidll.lib" when RAYGUI_SHARED && ODIN_ARCH == .i386 else 
+			"../lib/win32_msvc16/raygui.lib" when ODIN_ARCH == .i386 else 
+			"../lib/winarm64_msvc16/rayguidll.lib" when RAYGUI_SHARED && ODIN_ARCH == .arm64 else 
+			"../lib/winarm64_msvc16/raygui.lib" when ODIN_ARCH == .arm64 else
+			"system:raygui"
+		),
+	}
+} else when ODIN_OS == .Linux {
+	// Note(bumbread): I'm not sure why in `linux/` folder there are
+	// multiple copies of raygui.so, but since these bindings are for
+	// particular version of the library, I better specify it. Ideally,
+	// though, it's best specified in terms of major (.so.4)
+	foreign import raygui {
+		(
+			"../lib/linux_amd64/libraygui.so.5.0.0" when RAYGUI_SHARED && ODIN_ARCH == .amd64 else 
+			"../lib/linux_amd64/libraygui.a" when ODIN_ARCH == .amd64 else 
+			"../lib/linux_i386/libraygui.a" when ODIN_ARCH == .i386 else 
+			"../lib/linux_arm64/libraygui.so.5.0.0" when RAYGUI_SHARED && ODIN_ARCH == .arm64 else 
+			"../lib/linux_arm64/libraygui.a" when ODIN_ARCH == .arm64 else
+			"system:raygui"
+		),
+	}
+} else when ODIN_OS == .Darwin {
+	foreign import raygui {
+		"../lib/macos/libraygui.5.0.0.dylib" when RAYGUI_SHARED else "../lib/macos/libraygui.a",
+	}
+} else when ODIN_ARCH == .wasm32 || ODIN_ARCH == .wasm64p32 {
+	foreign import raygui {
+		RAYGUI_WASM_LIB,
+	}
+} else {
+	foreign import raygui "system:raygui"
+}
